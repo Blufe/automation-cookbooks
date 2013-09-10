@@ -9,7 +9,7 @@ describe_recipe 'opsworks_initial_setup::sysctl' do
   end
 
   it 'creates opsworks sysctl defaults' do
-    file('/etc/sysctl.d/70-opsworks-defaults.conf').must_exist.with(:owner, 'root').and(:group, 'root').and(:mode, '644')
+    file('/etc/sysctl.d/70-automation-defaults.conf').must_exist.with(:owner, 'root').and(:group, 'root').and(:mode, '644')
   end
 
   it 'sets sysctl values' do

@@ -5,7 +5,7 @@ directory "/etc/sysctl.d" do
   action :create
 end
 
-template "/etc/sysctl.d/70-opsworks-defaults.conf" do
+template "/etc/sysctl.d/70-automation-defaults.conf" do
   mode 0644
   owner "root"
   group "root"

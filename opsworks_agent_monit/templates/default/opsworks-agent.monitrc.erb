@@ -1,30 +1,30 @@
 # restart process if not responsive
-check process opsworks-agent with pidfile "<%= node[:opsworks_agent][:shared_dir] %>/pid/opsworks-agent.pid"
-  start program = "/etc/init.d/opsworks-agent start"
-  stop program = "/etc/init.d/opsworks-agent stop"
-  group opsworks
+check process opsworks-agent with pidfile "<%= node[:opsworks_agent][:shared_dir] %>/pid/automation-agent.pid"
+  start program = "/etc/init.d/automation-agent start"
+  stop program = "/etc/init.d/automation-agent stop"
+  group automation
 
 # check for running master process
-check process opsworks-agent-master-running matching "opsworks-agent:\smaster" every 3 cycles
-  start program = "/etc/init.d/opsworks-agent start"
-  stop program = "/etc/init.d/opsworks-agent stop"
-  group opsworks
+check process opsworks-agent-master-running matching "automation-agent:\smaster" every 3 cycles
+  start program = "/etc/init.d/automation-agent start"
+  stop program = "/etc/init.d/automation-agent stop"
+  group automation 
 
 # check run of statistic daemon
-check file opsworks-agent-statistic-daemons-log with path "<%= node[:opsworks_agent][:log_dir] %>/opsworks-agent.statistics.log"
-  if timestamp > 3 minutes
-    then exec "/etc/init.d/opsworks-agent restart"
-  group opsworks
+#check file opsworks-agent-statistic-daemons-log with path "<%= node[:opsworks_agent][:log_dir] %>/agent.statistics.log"
+#  if timestamp > 3 minutes
+#    then exec "/etc/init.d/automation-agent restart"
+#  group automation
 
 # check run of process command daemon
-check file opsworks-agent-process-command-daemons-log with path "<%= node[:opsworks_agent][:log_dir] %>/opsworks-agent.process_command.log"
+check file opsworks-agent-process-command-daemons-log with path "<%= node[:opsworks_agent][:log_dir] %>/agent.command.log"
   if timestamp > 3 minutes
-    then exec "/etc/init.d/opsworks-agent restart"
-  group opsworks
+    then exec "/etc/init.d/automation-agent restart"
+  group automation
 
 # check run of keep alive deamon
-check file opsworks-agent-keep-alive-daemons-log with path "<%= node[:opsworks_agent][:log_dir] %>/opsworks-agent.keep_alive.log"
+check file opsworks-agent-keep-alive-daemons-log with path "<%= node[:opsworks_agent][:log_dir] %>/agent.heartbeat.log"
   if timestamp > 3 minutes
-    then exec "/etc/init.d/opsworks-agent restart"
-  group opsworks
+    then exec "/etc/init.d/automation-agent restart"
+  group automation
 

@@ -32,6 +32,10 @@ if BlockDevice.on_kvm?
   end
 end
 
+# NIFTY: fix recipe is load if hypervisor is VMWare.
+if node[:virtualization][:system] == 'vmware'
+  include_recipe 'ebs::fix'
+end
 include_recipe 'ebs::volumes'
 unless node[:ebs][:raids].blank?
   include_recipe 'ebs::raids'

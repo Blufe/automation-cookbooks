@@ -40,6 +40,10 @@ end
   end
 end
 
+file "/etc/nginx/conf.d/default.conf" do
+  action :delete
+end
+
 %w{nxensite nxdissite}.each do |nxscript|
   template "/usr/sbin/#{nxscript}" do
     source "#{nxscript}.erb"

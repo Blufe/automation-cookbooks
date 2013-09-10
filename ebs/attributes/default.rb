@@ -1,5 +1,5 @@
-default[:ebs][:devices] = {}
-default[:ebs][:raids] = {}
+default[:ebs][:devices] ||= {}
+default[:ebs][:raids] ||= {}
 default[:ebs][:mdadm_chunk_size] = '256'
 default[:ebs][:md_read_ahead] = '65536' # 64k
 
@@ -22,4 +22,23 @@ if BlockDevice.on_kvm?
     skip_chars = new_raid_devices.size
   end
 
+end
+
+# NIFTY: Fix device name of VMWare.
+if node[:virtualization][:system] == 'vmware'
+  ebs_devices = {}
+
+  node[:ebs][:devices].each do |device, options|
+    new_name = BlockDevice.scsi_device(device)
+    ebs_devices[new_name] = ebs[:devices][device]
+  end
+  set[:ebs][:devices] = ebs_devices
+
+  ebs[:raids].each do |raid_device, config|
+    new_raid_devices = []
+    config[:disks].each do |name|
+      new_raid_devices << BlockDevice.scsi_device(name)
+    end
+    set[:ebs][:raids][raid_device][:disks] = new_raid_devices
+  end
 end

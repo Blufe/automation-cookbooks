@@ -27,15 +27,20 @@ node[:deploy].each do |application, deploy|
     owner deploy[:user]
     group deploy[:group]
     source "unicorn.service.erb"
-    variables(:deploy => deploy, :application => application)
+    variables(:deploy => deploy, :application => application, :platform => node['platform'])
+  end
+
+  # NIFTY: Create symlink for Unicorn bootscript.
+  link "/etc/init.d/unicorn_#{application}" do
+    to "#{deploy[:deploy_to]}/shared/scripts/unicorn"
   end
 
   service "unicorn_#{application}" do
-    start_command "#{deploy[:deploy_to]}/shared/scripts/unicorn start"
-    stop_command "#{deploy[:deploy_to]}/shared/scripts/unicorn stop"
-    restart_command "#{deploy[:deploy_to]}/shared/scripts/unicorn restart"
-    status_command "#{deploy[:deploy_to]}/shared/scripts/unicorn status"
-    action :nothing
+    start_command "/etc/init.d/unicorn_#{application} start"
+    stop_command "/etc/init.d/unicorn_#{application} stop"
+    restart_command "/etc/init.d/unicorn_#{application} restart"
+    status_command "/etc/init.d/unicorn_#{application} status"
+    action :enable
   end
 
   template "#{deploy[:deploy_to]}/shared/config/unicorn.conf" do

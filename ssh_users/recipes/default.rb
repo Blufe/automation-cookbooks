@@ -1,4 +1,4 @@
-group 'opsworks'
+group 'automation'
 
 existing_ssh_users = load_existing_ssh_users
 existing_ssh_users.each do |id, name|

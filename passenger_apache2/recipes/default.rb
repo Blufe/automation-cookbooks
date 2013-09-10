@@ -57,8 +57,9 @@ ruby_block "ensure only our passenger version is installed by deinstalling any o
   end
 end
 
+# NIFTY: add /usr/lib64/pkgconfig/ to PKG_CONFIG_PATH for CentOS 6.3 64bit Plain
 execute "passenger_module" do
-  command 'passenger-install-apache2-module -a'
+  command 'export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:/usr/lib64/pkgconfig/ && passenger-install-apache2-module -a'
   creates node[:passenger][:module_path]
   notifies :restart, "service[apache2]"
 end

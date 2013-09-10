@@ -1,0 +1,3 @@
+<% @scsi_devices.each do |device, kernels| -%>
+SUBSYSTEM=="block", KERNELS=="<%= kernels %>", SYMLINK="<%= device %>" 
+<% end -%>

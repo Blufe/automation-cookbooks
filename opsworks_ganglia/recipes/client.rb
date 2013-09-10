@@ -26,15 +26,44 @@ when "debian"
     only_if { ::File.exists?('/tmp/ganglia-monitor-python.deb') }
   end
 
-when "rhel"
-  package node[:ganglia][:monitor_package_name]
-end
+when "rhel" 
+  if node[:platform] == "amazon" 
+    node[:ganglia][:monitor_package_name]
+  else
+    # NIFTY: RPM install if platform is CentOS
+    package 'libconfuse'
+    package 'compat-expat1'
+    package 'apr'
 
-execute 'stop gmond with non-updated configuration' do
-  command value_for_platform_family(
-    "rhel" => '/etc/init.d/gmond stop',
-    "debian" => '/etc/init.d/ganglia-monitor stop'
-  )
+    remote_file "/tmp/#{node[:ganglia][:libganglia_package_name]}.rpm" do
+      source "#{node[:ganglia][:libganglia_package_url]}" 
+      not_if do
+        system("rpm -q #{node[:ganglia][:libganglia_package_name]} | grep -q '#{node[:ganglia][:libganglia_package_name]}-#{node[:ganglia][:custom_package_version]}'")
+      end
+    end
+
+    execute "install #{node[:ganglia][:libganglia_package_name]}" do
+      command "rpm -i /tmp/#{node[:ganglia][:libganglia_package_name]}.rpm && rm /tmp/#{node[:ganglia][:libganglia_package_name]}.rpm" 
+      only_if { ::File.exists?("/tmp/#{node[:ganglia][:libganglia_package_name]}.rpm") }
+    end
+
+    remote_file "/tmp/#{node[:ganglia][:monitor_package_name]}.rpm" do
+      source "#{node[:ganglia][:monitor_plugins_package_url]}" 
+      not_if do
+        system("rpm -q #{node[:ganglia][:monitor_package_name]} | grep -q '#{node[:ganglia][:monitor_package_name]}-#{node[:ganglia][:custom_package_version]}'")
+      end
+    end
+
+    execute "install #{node[:ganglia][:monitor_package_name]}" do
+      command "rpm -i /tmp/#{node[:ganglia][:monitor_package_name]}.rpm && rm /tmp/#{node[:ganglia][:monitor_package_name]}.rpm" 
+      only_if { ::File.exists?("/tmp/#{node[:ganglia][:monitor_package_name]}.rpm") }
+    end
+  end
+
+  group "ganglia" 
+  user "ganglia" do
+    gid "ganglia" 
+  end
 end
 
 ['scripts','conf.d','python_modules'].each do |dir|

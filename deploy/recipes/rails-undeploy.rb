@@ -57,6 +57,12 @@ node[:deploy].each do |application, deploy|
       action :run
     end
 
+    # NIFTY: Delete symlink for Unicorn bootscript.
+    link "/etc/init.d/unicorn_#{application}" do
+      to "#{deploy[:deploy_to]}/shared/scripts/unicorn"
+      action :delete
+    end
+
   else
     raise 'Unsupported Rails stack'
   end

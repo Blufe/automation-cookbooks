@@ -119,7 +119,7 @@ define :opsworks_deploy do
             )
           end.run_action(:create)
         elsif deploy[:application_type] == 'php'
-          template "#{node[:deploy][application][:deploy_to]}/shared/config/opsworks.php" do
+          template "#{node[:deploy][application][:deploy_to]}/shared/config/automation.php" do
             cookbook 'php'
             source 'opsworks.php.erb'
             mode '0660'
@@ -173,7 +173,7 @@ define :opsworks_deploy do
     end
   end
 
-  template "/etc/logrotate.d/opsworks_app_#{application}" do
+  template "/etc/logrotate.d/automation_app_#{application}" do
     backup false
     source "logrotate.erb"
     cookbook 'deploy'

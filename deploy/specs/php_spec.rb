@@ -26,7 +26,7 @@ describe_recipe 'deploy::php' do
       end
 
       it 'creates a logrotate configuration' do
-        file("/etc/logrotate.d/opsworks_app_#{application}").must_exist(:mode, '0644').with(:owner, 'root').and(:group, 'root')
+        file("/etc/logrotate.d/automation_app_#{application}").must_exist(:mode, '0644').with(:owner, 'root').and(:group, 'root')
       end
     end
   end

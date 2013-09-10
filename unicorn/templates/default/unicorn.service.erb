@@ -1,4 +1,21 @@
-#!/usr/bin/ruby
+#!/usr/local/bin/ruby
+
+<% case @platform %>
+<% when 'debian','ubuntu' %>
+  ### BEGIN INIT INFO
+  # Provides:          unicorn
+  # Required-Start:    $local_fs $remote_fs $network $syslog
+  # Required-Stop:     $local_fs $remote_fs $network $syslog
+  # Default-Start:     2 3 4 5
+  # Default-Stop:      0 1 6
+  # Short-Description: starts the nginx web server
+  # Description:       starts nginx using start-stop-daemon
+  ### END INIT INFO
+<% when 'centos','redhat','fedora','amazon' %>
+  # chkconfig:   - 99 10
+  # description:  Unicron
+  # processname: unicorn
+<% end %>
 
 require 'digest/md5'
 
@@ -13,7 +30,7 @@ end
 
 def run_and_ignore_exitcode_and_print_command(command)
   puts command
-  system(command)
+  system("export PATH=/usr/local/bin:$PATH; #{command}")
 end
 
 def unicorn_running?

@@ -7,7 +7,7 @@ describe_recipe "opsworks_nodejs::configure" do
   it "install the default opsworks.js for each node app" do
     node["deploy"].each do |application, deploy|
       next unless deploy["application_type"] == "nodejs"
-      config = File.join("#{deploy[:deploy_to]}", "shared/config/opsworks.js")
+      config = File.join("#{deploy[:deploy_to]}", "shared/config/automation.js")
       file(config).must_exist.with(:mode, "0660").and(:owner, "#{deploy[:user]}").and(:group, "#{deploy[:group]}")
       file(config).must_match(/^exports.db\ =\ #{deploy[:database].to_json}/)
       file(config).must_match(/^exports.memcached\ =\ #{deploy[:memcached].to_json}/)

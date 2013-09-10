@@ -1,6 +1,6 @@
 service 'mysql' do
   service_name value_for_platform(
-    ['centos','redhat','fedora','amazon'] => {'default' => 'mysqld'},
+    ['amazon'] => {'default' => 'mysqld'},
     'default' => 'mysql'
   )
   if platform?('ubuntu') && node[:platform_version].to_f >= 10.04

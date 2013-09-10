@@ -191,4 +191,34 @@ module BlockDevice
   def self.on_kvm?
     `cat /proc/cpuinfo`.match(/QEMU/)
   end
+
+  # NIFTY: device name of VMware is changed
+  def self.scsi_device(scsi_name)
+    "/dev/scsi" + scsi_name.sub(/SCSI\s*\(([0-9]+):([0-9]+)\)/, '\1_\2')
+  end
+
+  # NIFTY: Get host id of disk device
+  def self.scsi_host()
+    `cat /proc/scsi/scsi | grep -B 1 "Virtual disk" | head -1 | sed  's/.*scsi\\([0-9]\\).*/\\1/g'`.chomp
+  end
+
+  # NIFTY: Generation kernel number of fix object 
+  def self.fix_list(ebs)
+    rules = {}
+    ebs[:devices].each do |device, options|
+      tid = device.split("_")[1]
+      name = device.match(/\/dev\/(scsi[0-9]*_[0-9]*)/)[1]
+      rules[name] = BlockDevice.scsi_host + ":0:#{tid}:0" 
+    end
+
+    ebs[:raids].each do |raid_device, config|
+      config[:disks].each do |device|
+        tid = device.split("_")[1]
+        name = device.match(/\/dev\/(scsi[0-9]*_[0-9]*)/)[1]
+        rules[name] = BlockDevice.scsi_host + ":0:#{tid}:0" 
+      end
+    end
+
+    rules
+  end
 end

@@ -32,7 +32,7 @@ module OpsWorks
           action :create
           comment "OpsWorks user #{params[:name]}"
           uid params[:uid]
-          gid 'opsworks'
+          gid 'automation'
           home "/home/#{params[:name]}"
           supports :manage_home => true
           shell '/bin/bash'
@@ -40,7 +40,7 @@ module OpsWorks
 
         directory "/home/#{params[:name]}/.ssh" do
           owner params[:name]
-          group 'opsworks'
+          group 'automation'
           mode 0700
         end
 
@@ -54,7 +54,7 @@ module OpsWorks
         cookbook 'ssh_users'
         source 'authorized_keys.erb'
         owner params[:name]
-        group 'opsworks'
+        group 'automation'
         variables(:public_key => params[:public_key])
         only_if do
           File.exists?("/home/#{params[:name]}/.ssh")

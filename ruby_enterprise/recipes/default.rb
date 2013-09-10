@@ -12,6 +12,16 @@ when "debian","ubuntu"
     ignore_failure true
   end
 
+  # NIFTY: Install dependencies package.
+  %w(libyaml-0-2 libyaml-dev zlib1g-dev libssl-dev libreadline6-dev).each do |pkg|
+    package pkg do
+      action :install
+      only_if do
+        ::File.exists?("/tmp/#{File.basename(node[:ruby_enterprise][:url][arch])}")
+      end
+    end
+  end
+
   execute "Install Ruby Enterprise Edition" do
     cwd "/tmp"
     command "dpkg -i /tmp/#{File.basename(node[:ruby_enterprise][:url][arch])} && (/usr/local/bin/gem uninstall -a bundler || echo '1')"
@@ -36,8 +46,27 @@ when 'centos','redhat','fedora','amazon'
     action :remove
   end
 
+  # NIFTY: Install dependencies package.
+  %w(libyaml libyaml-devel readline-devel ncurses-devel gdbm-devel tcl-devel openssl-devel db4-devel libffi-devel
+    openssl098e compat-db43 compat-readline5 compat-libtermcap).each do |pkg|
+    package pkg do
+      action :install
+      only_if do
+        ::File.exists?(File.join('/tmp', File.basename(node[:ruby_enterprise][:url][arch])))
+      end
+    end
+  end
+
   rpm_package 'ruby-enterprise' do
     source File.join('/tmp', File.basename(node[:ruby_enterprise][:url][arch]))
+  end
+end
+
+# NIFTY: Execute ldconfig.
+case node[:platform]
+when 'centos','redhat','fedora','amazon','debian','ubuntu'
+  execute 'Configure dynamic linker run-time bindings' do
+    command 'ldconfig'
   end
 end
 

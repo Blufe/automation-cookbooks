@@ -1,3 +1,9 @@
+automation-cookbooks
+====================
+
+ニフティクラウド Automation で利用されている標準の Chef Cookbooks です。
+[aws/opsworks-cookbooks](https://github.com/aws/opsworks-cookbooks) を fork した上でニフティクラウド独自の修正を適用しています。
+
 opsworks-cookbooks
 ==================
 

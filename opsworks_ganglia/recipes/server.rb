@@ -10,10 +10,52 @@ def install_and_delete_local_deb_package(deb_file)
   end
 end
 
+# NIFTY: RPM install function
+def install_and_delete_local_rpm_package(rpm_file)
+  rpm_package rpm_file do
+    source rpm_file
+    only_if { ::File.exists?(rpm_file) }
+  end
+  execute "delete temporary file" do
+    command "rm -f #{rpm_file}" 
+  end
+end
+
 case node[:platform_family]
-when "rhel"
-  package node[:ganglia][:gmetad_package_name]
-  package node[:ganglia][:web_frontend_package_name]
+when "rhel" 
+  if node[:platform] == "amazon" 
+    package node[:ganglia][:gmetad_package_name]
+    package node[:ganglia][:web_frontend_package_name]
+  else
+    # NIFTY: RPM install if platform is CentOS
+    package 'rrdtool'
+
+    rpm_file = "/tmp/#{node[:ganglia][:gmetad_package_name]}" 
+    remote_file rpm_file do
+      source node[:ganglia][:gmetad_package_url]
+      not_if do
+        system("rpm -q #{node[:ganglia][:gmetad_package_name]} | grep -q '#{node[:ganglia][:gmetad_package_name]}-#{node[:ganglia][:custom_package_version]}'")
+      end
+    end
+    install_and_delete_local_rpm_package rpm_file
+
+    node[:ganglia][:web_frontend_dependencies].each do |web_frontend_dependency|
+      package web_frontend_dependency
+    end
+
+    rpm_file = "/tmp/#{node[:ganglia][:web_frontend_package_name]}" 
+    remote_file rpm_file do
+      source node[:ganglia][:web_frontend_package_url]
+      not_if do
+        system("rpm -q #{node[:ganglia][:web_frontend_package_name]} | grep -q '#{node[:ganglia][:web_frontend_package_name]}-#{node[:ganglia][:custom_package_version]}'")
+      end
+    end
+
+    execute "install #{node[:ganglia][:web_frontend_package_name]}" do
+      command "rpm -i #{rpm_file} --relocate /var/www/html/ganglia=/usr/share/ganglia && rm #{rpm_file}" 
+      only_if { ::File.exists?(rpm_file) }
+    end
+  end
 
 when "debian"
   package 'librrd4'
@@ -64,6 +106,13 @@ execute "fix permissions on ganglia rrds directory" do
 end
 
 include_recipe 'apache2::service'
+
+service 'httpd' do
+  case node[:platform]
+  when 'centos','redhat','fedora','amazon'
+    action :enable
+  end
+end
 
 service 'gmetad' do
   action [ :enable, :start ]

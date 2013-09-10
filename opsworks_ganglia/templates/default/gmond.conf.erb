@@ -22,14 +22,14 @@ globals {
  * NOT be wrapped inside of a <CLUSTER> tag. */
 cluster {
   name = "<%= @stack_name.gsub(/[\(\)\[\]\&]/,'') %>"
-  owner = "AWS OpsWorks"
+  owner = "NiftyCloud Automation"
   latlong = "unspecified"
   url = "unspecified"
 }
 
 /* The host section describes attributes of the host, like the location */
 host {
-  location = "AWS OpsWorks"
+  location = "NiftyCloud Automation"
 }
 
 <% if @monitoring_master %>

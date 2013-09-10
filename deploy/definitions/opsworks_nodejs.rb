@@ -12,13 +12,62 @@ define :opsworks_nodejs do
     end
   end
 
-  template "#{deploy[:deploy_to]}/shared/config/opsworks.js" do
+  template "#{deploy[:deploy_to]}/shared/config/automation.js" do
     cookbook 'opsworks_nodejs'
     source 'opsworks.js.erb'
     mode '0660'
     owner deploy[:user]
     group deploy[:group]
     variables(:database => deploy[:database], :memcached => deploy[:memcached], :layers => node[:opsworks][:layers])
+  end
+
+  #NIFTY : Create SSL Files for Node.js
+  directory "#{deploy[:deploy_to]}/shared/ssl" do
+    user deploy[:user]
+    group deploy[:group]
+    only_if do
+      deploy[:ssl_support]
+    end
+  end
+
+  file "#{deploy[:deploy_to]}/shared/ssl/#{application}.crt" do
+    mode '0600'
+    content deploy[:ssl_certificate]
+    owner deploy[:user]
+    group deploy[:group]
+    notifies :restart, "service[monit]"
+    only_if do
+      deploy[:ssl_support]
+    end
+  end
+
+  file "#{deploy[:deploy_to]}/shared/ssl/#{application}.key" do
+    mode '0600'
+    content deploy[:ssl_certificate_key]
+    owner deploy[:user]
+    group deploy[:group]
+    notifies :restart, "service[monit]"
+    only_if do
+      deploy[:ssl_support]
+    end
+  end
+
+  file "#{deploy[:deploy_to]}/shared/ssl/#{application}.ca" do
+    mode '0600'
+    content deploy[:ssl_certificate_ca]
+    owner deploy[:user]
+    group deploy[:group]
+    notifies :restart, "service[monit]"
+    only_if do
+      deploy[:ssl_support] && deploy[:ssl_certificate_ca]
+    end
+  end
+
+  link "#{deploy[:deploy_to]}/current/ssl" do
+    to "#{deploy[:deploy_to]}/shared/ssl"
+    only_if do
+      deploy[:ssl_support]
+    end
   end
 
   template "#{node.default[:monit][:conf_dir]}/node_web_app-#{application}.monitrc" do

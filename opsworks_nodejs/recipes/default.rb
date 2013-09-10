@@ -34,6 +34,16 @@ when 'centos','redhat','fedora','amazon'
     end
   end
 
+  # NIFTY: Install dependencies package.
+  %w(libyaml libyaml-devel readline-devel ncurses-devel gdbm-devel tcl-devel openssl-devel db4-devel libffi-devel).each do |pkg|
+    package pkg do
+      action :install
+      only_if do
+        ::File.exists?("/tmp/#{node[:opsworks_nodejs][:rpm]}")
+      end
+    end
+  end
+
   rpm_package "Install node.js #{node[:opsworks_nodejs][:version]}" do
     source "/tmp/#{node[:opsworks_nodejs][:rpm]}"
     action :install

@@ -17,7 +17,7 @@
 # limitations under the License.
 #
 case node[:platform]
-   when 'ubuntu'
+   when 'ubuntu', 'centos'
      package 'haproxy' do
         action :install
      end

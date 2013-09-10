@@ -11,7 +11,7 @@ module OpsWorks
           variables(:access_key => scm_options[:user], :secret_key => scm_options[:password])
         end
 
-        tmpdir = Dir.mktmpdir('opsworks')
+        tmpdir = Dir.mktmpdir('automation')
         directory tmpdir do
           mode 0755
         end

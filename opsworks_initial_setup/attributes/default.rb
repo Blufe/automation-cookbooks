@@ -1,12 +1,12 @@
 GC.disable unless node[:opsworks] && node[:opsworks][:instance] && node[:opsworks][:instance][:instance_type] == 't1.micro'
 
 # this values must match the ones respective ones in the agent configuration
-default[:opsworks_agent][:base_dir] = '/opt/aws/opsworks'
+default[:opsworks_agent][:base_dir] = '/opt/niftycloud/automation'
 default[:opsworks_agent][:current_dir] = "#{node[:opsworks_agent][:base_dir]}/current"
-default[:opsworks_agent][:shared_dir] = '/var/lib/aws/opsworks'
-default[:opsworks_agent][:log_dir] = '/var/log/aws/opsworks'
-default[:opsworks_agent][:user] = 'aws'
-default[:opsworks_agent][:group] = 'aws'
+default[:opsworks_agent][:shared_dir] = '/var/lib/niftycloud/automation'
+default[:opsworks_agent][:log_dir] = '/var/log/niftycloud/automation'
+default[:opsworks_agent][:user] = 'niftycloud'
+default[:opsworks_agent][:group] = 'niftycloud'
 
 default[:opsworks][:ruby_stack] = 'ruby_enterprise'
 default[:opsworks][:ruby_version] = '1.9.3'
@@ -42,7 +42,7 @@ default[:opsworks_initial_setup][:limits][:rtprio] = nil
 default[:opsworks_initial_setup][:micro][:yum_dump_file] = File.join(Chef::CHEF_ROOT, "chef", "provider", "package", "yum-dump.py")
 default[:opsworks_initial_setup][:micro][:yum_dump_lock_timeout] = 120
 
-default[:opsworks_initial_setup][:autofs_map_file] = "/etc/auto.opsworks"
+default[:opsworks_initial_setup][:autofs_map_file] = "/etc/auto.automation"
 default[:opsworks_initial_setup][:bind_mounts][:mounts] = {
   "/srv/www" => "/mnt/srv/www",
   "/var/www" => "/mnt/var/www",

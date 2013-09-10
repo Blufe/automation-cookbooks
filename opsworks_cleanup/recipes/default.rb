@@ -2,7 +2,7 @@ require 'tmpdir'
 
 ruby_block 'Remove temp directories' do
   block do
-    Dir.glob(Dir.tmpdir + '/opsworks*').each do |tmpdir|
+    Dir.glob(Dir.tmpdir + '/automation*').each do |tmpdir|
       system("rm -rf #{tmpdir}")
     end
   end

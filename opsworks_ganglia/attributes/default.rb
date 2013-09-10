@@ -39,13 +39,31 @@ when "rhel"
   default[:ganglia][:gmetad_package_name] = "ganglia-gmetad"
   default[:ganglia][:monitor_package_name] = "ganglia-gmond"
   default[:ganglia][:web_frontend_package_name] = "ganglia-web"
+  default[:ganglia][:libganglia_package_name] = "libganglia"
+
+  # NIFTY: RPM infomation
+  default[:ganglia][:custom_package_version] = '3.5.0-1'
+
+  default[:ganglia][:libganglia_package] = "#{node[:ganglia][:libganglia_package_name]}-#{node[:ganglia][:custom_package_version]}.x86_64.rpm" 
+  default[:ganglia][:gmetad_package] = "#{node[:ganglia][:gmetad_package_name]}-#{node[:ganglia][:custom_package_version]}.x86_64.rpm" 
+  default[:ganglia][:web_frontend_package] = "#{node[:ganglia][:web_frontend_package_name]}-#{node[:ganglia][:custom_package_version]}.noarch.rpm" 
+  default[:ganglia][:monitor_package] = "#{node[:ganglia][:monitor_package_name]}-#{node[:ganglia][:custom_package_version]}.x86_64.rpm" 
+
+  default[:ganglia][:package_base_url] = "#{node[:opsworks_commons][:assets_url]}/packages/#{node[:platform]}/#{node[:platform_version]}" 
+
+  default[:ganglia][:libganglia_package_url] = "#{node[:ganglia][:package_base_url]}/#{node[:ganglia][:libganglia_package]}" 
+  default[:ganglia][:gmetad_package_url] = "#{node[:ganglia][:package_base_url]}/#{node[:ganglia][:gmetad_package]}" 
+  default[:ganglia][:web_frontend_package_url] ="#{node[:ganglia][:package_base_url]}/#{node[:ganglia][:web_frontend_package]}" 
+  default[:ganglia][:monitor_plugins_package_url] ="#{node[:ganglia][:package_base_url]}/#{node[:ganglia][:monitor_package]}" 
+
+  default[:ganglia][:web_frontend_dependencies] = ["php", "php-gd", "php-xml"]
 end
 
 default[:ganglia][:nginx][:status_url] = '/nginx_status'
 default[:ganglia][:web][:svn] = 'no'
 default[:ganglia][:web][:url] = '/ganglia'
 default[:ganglia][:web][:welcome_page] = 'ganglia_welcome.html'
-default[:ganglia][:web][:user] = 'opsworks'
+default[:ganglia][:web][:user] = 'automation'
 default[:ganglia][:web][:password] = SecureRandom.base64[0...20]
 default[:ganglia][:web][:destdir] = case node[:platform_family]
                                     when "rhel"

@@ -48,6 +48,28 @@ when 'centos','redhat','fedora','amazon'
   end
 end
 
+# NIFTY: Install dependencies package.
+case node[:platform]
+when 'centos','redhat','fedora','amazon'
+  %w(libyaml libyaml-devel readline-devel ncurses-devel gdbm-devel tcl-devel openssl-devel db4-devel libffi-devel).each do |pkg|
+    package pkg do
+      action :install
+      only_if do
+        ::File.exists?("/tmp/#{node['ruby']['rpm']}")
+      end
+    end
+  end
+when 'debian','ubuntu'
+  %w(libyaml-0-2 libyaml-dev zlib1g-dev libssl-dev).each do |pkg|
+    package pkg do
+      action :install
+      only_if do
+        ::File.exists?("/tmp/#{node['ruby']['deb']}")
+      end
+    end
+  end
+end
+
 execute "Install Ruby #{node[:ruby][:full_version]}" do
   cwd "/tmp"
   case node[:platform]
@@ -62,6 +84,14 @@ execute "Install Ruby #{node[:ruby][:full_version]}" do
     only_if do
       ::File.exists?("/tmp/#{node['ruby']['deb']}")
     end
+  end
+end
+
+# NIFTY: Execute ldconfig.
+case node[:platform]
+when 'centos','redhat','fedora','amazon','debian','ubuntu'
+  execute 'Configure dynamic linker run-time bindings' do
+    command 'ldconfig'
   end
 end
 

@@ -3,7 +3,28 @@ require 'resolv'
 include_recipe 'mysql::client'
 include_recipe 'mysql::prepare'
 
-package 'mysql-server'
+# NIFTY: RPM install if platform is CentOS
+if node[:platform_family] == 'rhel' and node[:platform] != 'amazon'
+  remote_file "/tmp/#{node[:mysql][:server_package_name]}.rpm" do
+    source "#{node[:mysql][:server_package_url]}" 
+    not_if do
+      system("rpm -q #{node[:mysql][:server_package_name]} | grep -q '#{node[:mysql][:server_package_name]}-#{node[:mysql][:custom_package_version]}'")
+    end
+  end
+
+  execute "install #{node[:mysql][:server_package_name]}" do
+    command "rpm -i /tmp/#{node[:mysql][:server_package_name]}.rpm && rm /tmp/#{node[:mysql][:server_package_name]}.rpm" 
+    only_if { ::File.exists?("/tmp/#{node[:mysql][:server_package_name]}.rpm") }
+  end
+
+  directory "/var/run/mysqld" do
+    owner "mysql" 
+    group "mysql" 
+    action :create
+  end
+else
+  package 'mysql-server'
+end
 
 if platform?('ubuntu') && node[:platform_version].to_f < 10.04
   remote_file '/tmp/mysql_init.patch' do

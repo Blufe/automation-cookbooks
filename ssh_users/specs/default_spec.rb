@@ -5,7 +5,7 @@ describe_recipe 'ssh_users::default' do
   include MiniTest::Chef::Assertions
 
   it 'creates opsworks group' do
-    group('opsworks').must_exist
+    group('automation').must_exist
   end
 
   it 'sets up sudoers file' do

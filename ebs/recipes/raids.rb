@@ -6,13 +6,18 @@ execute 'Load device mapper kernel module' do
   ignore_failure true
 end
 
-node.default[:ebs][:raids].each do |raid_device, options|
+node.set[:ebs][:raids].each do |raid_device, options|
   Chef::Log.info "Processing RAID #{raid_device} with options #{options} "
   lvm_device = BlockDevice.lvm_device(raid_device)
 
   Chef::Log.info("Waiting for individual disks of RAID #{options[:mount_point]}")
   options[:disks].each do |disk_device|
-    BlockDevice::wait_for(disk_device)
+    # NIFTY: Surrounded by ruby_block
+    ruby_block "wait for #{disk_device}" do
+      block do
+        BlockDevice::wait_for(disk_device)
+      end
+    end
   end
 
   ruby_block "Create or resume RAID array #{raid_device}" do
@@ -68,11 +73,6 @@ node.default[:ebs][:raids].each do |raid_device, options|
     device lvm_device
     options 'noatime'
     pass 0
-    not_if do
-      File.read('/etc/mtab').split("\n").any? do |line| 
-        line.match(" #{options[:mount_point]} ")
-      end
-    end
   end
 
   template 'mdadm configuration' do

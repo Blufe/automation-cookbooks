@@ -1,4 +1,4 @@
-template '/etc/ld.so.conf.d/opsworks-user-space.conf' do
+template '/etc/ld.so.conf.d/automation-user-space.conf' do
   source 'ldconfig-opsworks-user-space.conf.erb'
   mode 0444
   owner 'root'

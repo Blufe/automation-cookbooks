@@ -13,7 +13,7 @@ module OpsWorks
           archive_url = scm_options[:repository]
         end
 
-        tmpdir = Dir.mktmpdir('opsworks')
+        tmpdir = Dir.mktmpdir('automation')
         directory tmpdir do
           mode 0755
         end

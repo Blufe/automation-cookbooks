@@ -12,14 +12,12 @@ directory '/etc/ganglia-webfrontend' do
   mode '0755'
 end
 
-if platform_family?("rhel")
-  ["dwoo/compiled","dwoo/cache"].each do |dir|
-    directory "#{node[:ganglia][:datadir]}/#{dir}" do
-      owner node[:apache][:user]
-      group node[:apache][:group]
-      mode '0755'
-      recursive true
-    end
+["dwoo/compiled","dwoo/cache"].each do |dir|
+  directory "#{node[:ganglia][:datadir]}/#{dir}" do
+    owner node[:apache][:user]
+    group node[:apache][:group]
+    mode '0755'
+    recursive true
   end
 end
 
@@ -33,7 +31,7 @@ when "debian"
     enable false
   end
 
-  web_app "opsworks-ganglia" do
+  web_app "automation-ganglia" do
     enable true
     notifies :nothing, "service[apache2]"
   end

@@ -51,8 +51,8 @@ when 'debian','ubuntu'
   set[:mysql][:grants_path]              = '/etc/mysql/grants.sql'
 end
 
-default[:mysql][:ec2_path]                 = '/mnt/mysql'
-default[:mysql][:opsworks_autofs_map_file] = '/etc/auto.opsworks'
+default[:mysql][:ec2_path]                 = nil
+default[:mysql][:opsworks_autofs_map_file] = '/etc/auto.automation'
 default[:mysql][:autofs_options] = "-fstype=none,bind,rw"
 default[:mysql][:autofs_entry] = "#{node[:mysql][:datadir]} #{node[:mysql][:autofs_options]} :#{node[:mysql][:ec2_path]}"
 
