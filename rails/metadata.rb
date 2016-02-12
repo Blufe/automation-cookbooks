@@ -1,3 +1,4 @@
+name       "rails"
 maintainer "Amazon Web Services"
 description "Installs Rails"
 version "0.1"

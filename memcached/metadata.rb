@@ -1,3 +1,4 @@
+name       "memcached"
 maintainer "Amazon Web Services"
 description "Installs Memcached"
 version "0.1"

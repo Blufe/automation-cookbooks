@@ -1,3 +1,4 @@
+name       "ebs"
 maintainer "Amazon Web Services"
 description "Mounts attached EBS volumes"
 version "0.1"

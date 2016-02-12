@@ -1,3 +1,4 @@
+name       "opsworks_ganglia"
 maintainer "Amazon Web Services"
 version "0.2"
 supports "ubuntu"

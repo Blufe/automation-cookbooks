@@ -1,3 +1,4 @@
+name             "mod_php5_apache2"
 maintainer       "Amazon Web Services"
 license          "Apache 2.0"
 description      "Installs/Configures Apache with mod_php5"

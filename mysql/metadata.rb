@@ -1,3 +1,4 @@
+name              "mysql"
 maintainer        "Amazon Web Services"
 license           "Apache 2.0"
 description       "Installs and configures MySQL"

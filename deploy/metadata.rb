@@ -1,3 +1,4 @@
+name       "deploy"
 maintainer "Amazon Web Services"
 description "Deploy applications"
 version "0.1"

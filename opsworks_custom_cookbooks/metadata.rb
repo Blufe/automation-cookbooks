@@ -1,3 +1,4 @@
+name       "opsworks_custom_cookbooks"
 maintainer "Amazon Web Services"
 description "Supports custom user cookbooks"
 version "0.1"

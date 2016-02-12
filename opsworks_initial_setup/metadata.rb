@@ -1,3 +1,4 @@
+name       "opsworks_initial_setup"
 maintainer "Amazon Web Services"
 description "Initial Setup for EC2 instances"
 version "0.1"

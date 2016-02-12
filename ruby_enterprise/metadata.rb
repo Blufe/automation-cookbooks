@@ -1,3 +1,4 @@
+name             "ruby_enterprise"
 maintainer       "Amazon Web Services"
 license          "Apache 2.0"
 description      "Installs/Configures ruby-enterprise"
